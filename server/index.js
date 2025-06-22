@@ -1,225 +1,85 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
+const http = require('http');
+const { Server } = require('socket.io');
+
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
-const PORT = 5000;
-
-// Middleware
-app.use(cors());
+const PORT=5000;
+app.use(cors({
+  origin: ["http://192.168.29.186:3000","http://localhost:3000"], // or your frontend IP
+  credentials: true,
+  methods: ["GET", "POST", "DELETE", "PATCH"]
+}));
 app.use(express.json());
-
-// Connect to MongoDB
-mongoose
-  .connect("mongodb://127.0.0.1:27017/scholarshipDB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
-
-// Scholarship Schema
-const scholarshipSchema = new mongoose.Schema({
-    link: String,
-    name: String,
-    amount: String,
-    deadline: String,
-    source: String,
-    age: Number,           
-    gender: String,       
-    income: Number,        
-    nationality: String,
-    location: String,
-    tenthlocation: String,
-    twelthlocation: String,
-    grade: Number,
-    currentYear: String,
-    course: String,
-    universityOrCollege: String
-});
+const usersInRoom = {};
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: ["http://192.168.29.186:3000", "http://localhost:3000"], methods: ["GET", "POST"] }
+})
+const RoomCode = require('./models/RoomCode');
 
 
-const Scholarship = mongoose.model('Scholarship', scholarshipSchema, 'scholarshipsavail');
+io.on('connection', socket => {
+  console.log('A user connected: ' + socket.id);
 
-
-
-// POST Route to handle form submissions & find matching scholarships
-app.post('/api/scholarships/filter', async (req, res) => {
-  try {
-    const userDetails = req.body;
-    const filter = {};
-
-    const andConditions = [];
-
-    // Age
-    if (userDetails.age !== undefined && userDetails.age !== "") {
-      
-      andConditions.push({
-        $or: [
-          { age: { $exists: false } },
-          { age: { $lte: userDetails.age } }
-        ]
-      });
-    } else {
-      
-      andConditions.push({
-        age: { $exists: false }
-      });
-    }
-
-    // Gender
-    if (userDetails.gender !== undefined && userDetails.gender !== "") {
-      andConditions.push({
-        $or: [
-          { gender: { $exists: false } },
-          { gender: { $in: ['any', userDetails.gender] } }
-        ]
-      });
-    } else {
-      andConditions.push({
-        gender: { $exists: false }
-      });
-    }
-
-    // Income
-    if (userDetails.income !== undefined && userDetails.income !== "") {
-      andConditions.push({
-        $or: [
-          { income: { $exists: false } },
-          { income: { $gte: userDetails.income } }
-        ]
-      });
-    } else {
-      andConditions.push({
-        income: { $exists: false }
-      });
-    }
-
-    // Location
-    if (userDetails.location !== undefined && userDetails.location !== "") {
-      andConditions.push({
-        $or: [
-          { location: { $exists: false } },
-          { location: { $in: [userDetails.location, 'any'] } }
-        ]
-      });
-    } else {
-      andConditions.push({
-        location: { $exists: false }
-      });
-    }
-
-    // Tenth Location
-    if (userDetails.tenthlocation !== undefined && userDetails.tenthlocation !== "") {
-      andConditions.push({
-        $or: [
-          { tenthlocation: { $exists: false } },
-          { tenthlocation: { $in: [userDetails.tenthlocation, 'any'] } }
-        ]
-      });
-    } else {
-      andConditions.push({
-        tenthlocation: { $exists: false }
-      });
-    }
-
-    // Twelfth Location
-    if (userDetails.twelfthlocation !== undefined && userDetails.twelfthlocation !== "") {
-      andConditions.push({
-        $or: [
-          { twelthlocation: { $exists: false } },
-          { twelthlocation: { $in: [userDetails.twelfthlocation, 'any'] } }
-        ]
-      });
-    } else {
-      andConditions.push({
-        twelthlocation: { $exists: false }
-      });
-    }
-
-    // Grade
-    if (userDetails.grade !== undefined && userDetails.grade !== "") {
-      andConditions.push({
-        $or: [
-          { grade: { $exists: false } },
-          { grade: { $lte: userDetails.grade } }
-        ]
-      });
-    } else {
-      andConditions.push({
-        grade: { $exists: false }
-      });
-    }
-
-    // Current Year
-    if (userDetails.currentYear !== undefined && userDetails.currentYear !== "") {
-      andConditions.push({
-        $or: [
-          { currentYear: { $exists: false } },
-          { currentYear: { $in: [userDetails.currentYear, 'any'] } }
-        ]
-      });
-    } else {
-      andConditions.push({
-        currentYear: { $exists: false }
-      });
-    }
-
-    // Nationality
-    if (userDetails.nationality !== undefined && userDetails.nationality !== "") {
-      andConditions.push({
-        $or: [
-          { nationality: { $exists: false } },
-          { nationality: { $in: [userDetails.nationality, 'any'] } }
-        ]
-      });
-    } else {
-      andConditions.push({
-        nationality: { $exists: false }
-      });
-    }
-
-    // Course
-    if (userDetails.course !== undefined && userDetails.course !== "") {
-      andConditions.push({
-        $or: [
-          { course: { $exists: false } },
-          { course: { $in: [userDetails.course, 'any'] } }
-        ]
-      });
-    } else {
-      andConditions.push({
-        course: { $exists: false }
-      });
-    }
-    if (userDetails.universityOrCollege !== undefined && userDetails.universityOrCollege !== "") {
-      andConditions.push({
-        $or: [
-          { course: { $exists: false } },
-          { course: { $in: [userDetails.universityOrCollege, 'any'] } }
-        ]
-      });
-    } else {
-      andConditions.push({
-        course: { $exists: false }
-      });
-    }
-
-    // Combine all AND conditions
-    filter.$and = andConditions;
-
-    const matchingScholarships = await Scholarship.find(filter);
-
-    res.status(200).json({ scholarships: matchingScholarships });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+  socket.on('join-room', async (roomId, username) => {
+    socket.join(roomId);
+     if (!usersInRoom[roomId]) usersInRoom[roomId] = [];
+    usersInRoom[roomId].push({ socketId: socket.id, username });
+    io.to(roomId).emit('room-users', usersInRoom[roomId]);
+    const saved = await RoomCode.findOne({ roomId });
+    if (saved) {
+    socket.emit('code-update', saved.code);
   }
+    console.log(`User ${socket.id} joined room ${roomId}`);
+    
+  });
+
+   socket.on('disconnect', () => {
+    for (const roomId in usersInRoom) {
+      usersInRoom[roomId] = usersInRoom[roomId].filter(u => u.socketId !== socket.id);
+      io.to(roomId).emit('room-users', usersInRoom[roomId]);
+    }
+    console.log('User disconnected:', socket.id);
+  });
+
+
+  socket.on('code-change', async ({ roomId, code }) => {
+    await RoomCode.findOneAndUpdate(
+    { roomId },
+    { code, lastUpdated: new Date() },
+    { upsert: true }
+  );
+    socket.to(roomId).emit('code-update', code);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected: ' + socket.id);
+  });
 });
 
+const userRoutes = require('./routes/users');
+app.use('/api/users', userRoutes);
 
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+
+// Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/problems', require('./routes/problem'));
+app.use('/api/execute', require('./routes/execute'));
+ const peersRouter = require('./routes/peers');
+
+
+ app.use('/api/peers', peersRouter);
+
+
+mongoose.connect(process.env.MONGO_URL)
+  .then(() => {
+     server.listen(5000, () => console.log("Server with WebSocket running on port 5000"));
+    //app.listen(5000, () => console.log('Server running on http://localhost:5000'));
+  })
+  .catch(err => console.error(err));
+ 
