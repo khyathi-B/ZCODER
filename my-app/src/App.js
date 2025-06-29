@@ -57,9 +57,10 @@ function App() {
          <Route path="/saved-solutions/:ownerId" element={<SharedSolutions />} />
         <Route path="/register" element={<Register />} />
         <Route path="/live-room" element={<LiveRoom />} />
+        
         <Route path="/create-problem" element={<CreateProblem />} />
         <Route path="/connect" element={<Connect/>} />
-        
+        <Route path="/submit-solution/:problemId" element={<SolutionEditor />} />
 
       </Routes>
     </BrowserRouter>

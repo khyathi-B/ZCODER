@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import getUser from '../utils/getUser';
 export default function Problems() {
-  
+  const navigate = useNavigate();
   const [problems, setProblems] = useState([]);
   const [newComments, setNewComments] = useState({});
   const [commentsMap, setCommentsMap] = useState({});
@@ -63,6 +64,9 @@ export default function Problems() {
           <h4>{p.title}</h4>
           <p>{p.description}</p>
           <button style={{backgroundColor: 'red', color:'white'}}onClick={() => bookmark(p._id)}>Bookmark</button>
+          <button onClick={()=>navigate(`/submit-solution/${p._id}`)}>Submit Solution</button>
+          
+          <p><strong>ID:</strong>{p._id}</p>
           <h3>Comments</h3>
           <textarea
             rows={3}

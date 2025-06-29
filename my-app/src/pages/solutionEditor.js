@@ -6,7 +6,7 @@ import { python } from '@codemirror/lang-python';
 import { cpp } from '@codemirror/lang-cpp';
 import { java } from '@codemirror/lang-java';
 import getUser from '../utils/getUser';
-
+import {useParams} from 'react-router-dom';
 export default function SolutionEditor() {
   const [problems, setProblems] = useState([]);
   const [selectedProblem, setSelectedProblem] = useState('');
@@ -14,13 +14,18 @@ export default function SolutionEditor() {
   const [language, setLanguage] = useState('javascript');
   const [visibility, setVisibility] = useState('private')
 const [input, setInput] = useState('');
-
+const {problemId}=useParams();
 const user = getUser();
 const userId=user.id
 useEffect(() => {
     axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/problems/all`)
-      .then(res => setProblems(res.data));
-  }, []);
+      .then(res => {setProblems(res.data);
+        if(problemId){
+         setSelectedProblem(problemId);
+       }
+       });
+      
+  }, [problemId]);
 
 
 
