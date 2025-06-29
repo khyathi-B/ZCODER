@@ -19,7 +19,9 @@ import SharedSolutions from './pages/savedsolutions';
 import { useNavigate } from 'react-router-dom';
 function App() {
    const user = getUser();
-  
+   const isRoot=window.location.pathname == '/';
+   const shouldshowLogin = isRoot && !user;
+   const shouldshowprofile = isRoot && user;
   return (
     <>
     <div>
@@ -31,6 +33,18 @@ function App() {
           Logout
         </button>
       )}
+      {shouldshowLogin&&(
+        <div >
+          <button onClick={()=>{window.location.href = '/login'; }}>Login</button>
+          <button onClick={()=>{window.location.href = '/signup'; }}>SignUp</button>
+        </div>
+      )}
+      {shouldshowprofile && (
+        <div>
+          <button onClick={()=>{window.location.href = '/profile'; }}>Profile</button>
+        </div>
+      )}
+      
       <BrowserRouter>
       <Routes>
         <Route path="/signup" element={<Signup />} />

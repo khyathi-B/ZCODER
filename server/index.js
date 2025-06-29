@@ -9,7 +9,7 @@ require('dotenv').config();
 const app = express();
 const PORT=5000;
 app.use(cors({
-  origin: ["http://192.168.29.186:3000","http://localhost:3000"], // or your frontend IP
+  origin: [process.env.CLIENT_URL,"http://localhost:3000"], // or your frontend IP
   credentials: true,
   methods: ["GET", "POST", "DELETE", "PATCH"]
 }));
@@ -17,7 +17,7 @@ app.use(express.json());
 const usersInRoom = {};
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: ["http://192.168.29.186:3000", "http://localhost:3000"], methods: ["GET", "POST"] }
+  cors: { origin: [process.env.CLIENT_URL, "http://localhost:3000"], methods: ["GET", "POST"] }
 })
 const RoomCode = require('./models/RoomCode');
 

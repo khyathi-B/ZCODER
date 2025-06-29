@@ -10,7 +10,7 @@ export default function Register() {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post('http://192.168.29.186:5000/api/auth/register', form);
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, form);
       alert('User created!');
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));

@@ -18,7 +18,7 @@ const [input, setInput] = useState('');
 const user = getUser();
 const userId=user.id
 useEffect(() => {
-    axios.get('http://192.168.29.186:5000/api/problems/all')
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/problems/all`)
       .then(res => setProblems(res.data));
   }, []);
 
@@ -27,7 +27,7 @@ useEffect(() => {
   
   const submitSolution = () => {
     
-    axios.post('http://192.168.29.186:5000/api/problems/submit-solution', {
+    axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/problems/submit-solution`, {
       userId,
       problemId: selectedProblem,
       code,
@@ -97,7 +97,7 @@ useEffect(() => {
 };
 const runAgainstTestCases = async () => {
   try {
-    const res = await axios.post('http://192.168.29.186:5000/api/problems/validate', {
+    const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/problems/validate`, {
       code,
       language,
       problemId: selectedProblem

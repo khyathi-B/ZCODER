@@ -12,13 +12,13 @@ export default function Problems() {
   
 
   useEffect(() => {
-    axios.get('http://192.168.29.186:5000/api/problems/all')
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/problems/all`)
       .then(res => {
         setProblems(res.data);
 
         // Fetch comments for all problems
         res.data.forEach(p => {
-          axios.get(`http://192.168.29.186:5000/api/problems/comments/${p._id}`)
+          axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/problems/comments/${p._id}`)
             .then(commentRes => {
               setCommentsMap(prev => ({ ...prev, [p._id]: commentRes.data }));
             });
@@ -29,7 +29,7 @@ export default function Problems() {
  if(user){
   const userId = user.id;
   const bookmark = (problemId) => {
-    axios.post('http://192.168.29.186:5000/api/problems/bookmark', {
+    axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/problems/bookmark`, {
       userId,
       problemId
     }).then(() => alert('Bookmarked!'));
@@ -38,7 +38,7 @@ export default function Problems() {
     const text = newComments[problemId];
     if (!text?.trim()) return;
 
-    axios.post('http://192.168.29.186:5000/api/problems/add-comment', {
+    axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/problems/add-comment`, {
       problemId,
       userId,
       text

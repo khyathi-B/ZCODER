@@ -12,24 +12,24 @@ export default function Connect() {
     if (!user||!user.id) return <p>Please login first.</p>;
 
     // Fetch all users except self
-    axios.get('http://192.168.29.186:5000/api/peers/all-users')
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/peers/all-users`)
       .then(res => setAllUsers(res.data.filter(u => u._id !== user.id)))
       .catch(err => console.error("All Users fetch error:", err));
 
     // Fetch incoming requests
-    axios.get(`http://192.168.29.186:5000/api/peers/requests/${user.id}`)
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/peers/requests/${user.id}`)
       .then(res => setIncoming(res.data))
       .catch(err => console.error("Incoming requests fetch error:", err));
 
     // Fetch accepted connections
-    axios.get(`http://192.168.29.186:5000/api/peers/connections/${user.id}`)
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/peers/connections/${user.id}`)
       .then(res => setConnections(res.data))
       .catch(err => console.error("Connections fetch error:", err));
 
   }, [user]);
 
   const sendRequest = (receiverId) => {
-    axios.post('http://192.168.29.186:5000/api/peers/send-request', {
+    axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/peers/send-request`, {
       senderId: user.id,
       receiverId
     }).then(() => alert('Request sent!'))
@@ -44,7 +44,7 @@ export default function Connect() {
   };
 
   const acceptRequest = (senderId) => {
-    axios.post('http://192.168.29.186:5000/api/peers/accept-request', {
+    axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/peers/accept-request`, {
       receiverId: user.id,
       senderId
     }).then(() => {
@@ -53,7 +53,7 @@ export default function Connect() {
     });
   };
   const rejectRequest = (senderId) => {
-  axios.post('http://192.168.29.186:5000/api/peers/reject-request', {
+  axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/peers/reject-request`, {
     receiverId: user.id,
     senderId
   }).then(() => {

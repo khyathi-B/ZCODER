@@ -9,7 +9,7 @@ export default function Bookmarked() {
   
   useEffect(() => {
     if (!userId) return;
-    axios.get(`http://192.168.29.186:5000/api/users/${user.id}/bookmarks`)
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/${user.id}/bookmarks`)
       .then(res => setBookmarks(res.data));
       
   }, [user]);

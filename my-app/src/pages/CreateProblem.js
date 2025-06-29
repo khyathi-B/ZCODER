@@ -36,7 +36,7 @@ export default function CreateProblem() {
     }
 
     try {
-      const res = await axios.post('http://192.168.29.186:5000/api/problems/create', {
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/problems/create`, {
         title,
         description,
         tags: tags.split(',').map(t => t.trim()),

@@ -15,7 +15,7 @@ export default function SavedSolutions() {
     console.log("OwnerId:", ownerId);
     if (!viewerId || !ownerId) return;
 
-    axios.get(`http://192.168.29.186:5000/api/users/${viewerId}/solutions/${ownerId}`)
+    axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/${viewerId}/solutions/${ownerId}`)
       .then(res => setSolutions(res.data))
       .catch(err => {
         console.error('Fetch error:', err);
@@ -24,7 +24,7 @@ export default function SavedSolutions() {
   }, [viewerId, ownerId]);
 
   const updateVisibility = (solutionId, visibility) => {
-    axios.patch(`http://192.168.29.186:5000/api/problems/solution/${solutionId}/visibility`, { visibility })
+    axios.patch(`${process.env.REACT_APP_BACKEND_URL}/api/problems/solution/${solutionId}/visibility`, { visibility })
       .then(() => {
         alert('Visibility updated');
         setSolutions(prev => prev.map(sol =>

@@ -7,7 +7,7 @@ import { python } from '@codemirror/lang-python';
 import { cpp } from '@codemirror/lang-cpp';
 import { java } from '@codemirror/lang-java';
 import getUser from '../utils/getUser';
-const socket = io('http://192.168.29.186:5000');
+const socket = io(`${process.env.REACT_APP_BACKEND_URL}`);
 
 export default function LiveRoom() {
   const [roomId, setRoomId] = useState('');
@@ -27,7 +27,7 @@ export default function LiveRoom() {
     socket.emit('join-room', roomId, username);
     setJoined(true);
     try {
-      const res = await axios.get(`http://192.168.29.186:5000/api/problems/${roomId}`);
+      const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/problems/${roomId}`);
       setProblem(res.data);
     } catch (err) {
       console.error('Failed to fetch problem:', err);
@@ -59,7 +59,7 @@ export default function LiveRoom() {
 
    const runCode = async () => {
   try {
-    const res = await axios.post('http://192.168.29.186:5000/api/execute', {
+    const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/execute`, {
       code,
       language,
       input: customInput,
@@ -77,7 +77,7 @@ export default function LiveRoom() {
   const handleSubmit = async () => {
     if (!user) return alert('Please log in to submit');
     try {
-      await axios.post('http://192.168.29.186:5000/api/problems/submit-solution', {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/problems/submit-solution`, {
         userId: user.id,
         problemId: roomId,
         code,
@@ -101,7 +101,7 @@ export default function LiveRoom() {
 
   const runAgainstTestCases = async () => {
   try {
-    const res = await axios.post('http://192.168.29.186:5000/api/problems/validate', {
+    const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/problems/validate`, {
       code,
       language,
       problemId: roomId,

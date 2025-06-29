@@ -34,3 +34,4 @@ coverage/
 # Windows specific
 ehthumbs.db
 Desktop.ini
+.env

@@ -11,7 +11,7 @@ export default function Profile() {
     if (!confirm) return;
 
     try {
-      await axios.delete(`http://192.168.29.186:5000/api/users/delete/${user.id}`);
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/users/delete/${user.id}`);
       localStorage.removeItem('user'); // Clear stored login info
       alert('Account deleted.');
       navigate('/login'); // Or homepage
